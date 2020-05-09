@@ -14,7 +14,7 @@ It runs on [jointJS](http://www.jointjs.com/). It exports to JSON with game read
 ![alt text](http://i.imgur.com/7lu8NIy.png?1)
 
 ## Nodes
-###Text.
+### Text
 Display a message from the specified actor.  
 Actor: Specify the actor who will say the speech.  
 Speech: The text the actor will say.  
@@ -30,6 +30,9 @@ Sets a variable to a value. Can link to one Text, Node, Set, or Branch.
 
 ### Branch
 Takes one of several paths based on the value of a variable. Each port can link to one Text, Node, Set, or Branch.
+
+### GenChoice
+Creates list with several responses that will appear only if the necessary conditions are met. First connection leads to path when no conditions are met and no choices appear.
 
 ### Node
 Does nothing. Can link to one Text, Node, Set, or Branch, or to one or more Choices.
