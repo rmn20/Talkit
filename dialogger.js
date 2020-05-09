@@ -39,23 +39,33 @@ var allowableConnections =
 	['dialogue.Text', 'dialogue.Choice'],
 	['dialogue.Text', 'dialogue.Set'],
 	['dialogue.Text', 'dialogue.Branch'],
+	['dialogue.Text', 'dialogue.GenChoice'],
 	['dialogue.Node', 'dialogue.Text'],
 	['dialogue.Node', 'dialogue.Node'],
 	['dialogue.Node', 'dialogue.Choice'],
 	['dialogue.Node', 'dialogue.Set'],
 	['dialogue.Node', 'dialogue.Branch'],
+	['dialogue.Node', 'dialogue.GenChoice'],
 	['dialogue.Choice', 'dialogue.Text'],
 	['dialogue.Choice', 'dialogue.Node'],
 	['dialogue.Choice', 'dialogue.Set'],
 	['dialogue.Choice', 'dialogue.Branch'],
+	['dialogue.Choice', 'dialogue.GenChoice'],
 	['dialogue.Set', 'dialogue.Text'],
 	['dialogue.Set', 'dialogue.Node'],
 	['dialogue.Set', 'dialogue.Set'],
 	['dialogue.Set', 'dialogue.Branch'],
+	['dialogue.Set', 'dialogue.GenChoice'],
 	['dialogue.Branch', 'dialogue.Text'],
 	['dialogue.Branch', 'dialogue.Node'],
 	['dialogue.Branch', 'dialogue.Set'],
 	['dialogue.Branch', 'dialogue.Branch'],
+	['dialogue.Branch', 'dialogue.GenChoice'],
+	['dialogue.GenChoice', 'dialogue.Text'],
+	['dialogue.GenChoice', 'dialogue.Node'],
+	['dialogue.GenChoice', 'dialogue.Set'],
+	['dialogue.GenChoice', 'dialogue.Branch'],
+	['dialogue.GenChoice', 'dialogue.GenChoice'],
 ];
 
 function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkView)
@@ -479,6 +489,143 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 	},
 });
 
+joint.shapes.dialogue.GenChoice = joint.shapes.devs.Model.extend(
+{
+	defaults: joint.util.deepSupplement
+	(
+		{
+			type: 'dialogue.GenChoice',
+			size: { width: 200, height: 57, },
+			inPorts: ['input'],
+			outPorts: ['output0'],
+			conditions: [],
+			choices: []
+		},
+		joint.shapes.dialogue.Base.prototype.defaults
+	),
+});
+joint.shapes.dialogue.GenChoiceView = joint.shapes.dialogue.BaseView.extend(
+{
+	template:
+	[
+		'<div class="node">',
+		'<span class="label"></span>',
+		'<button class="delete">x</button>',
+		'<button class="add">+</button>',
+		'<button class="remove">-</button>',
+		'<input type="text" class="name" placeholder="Title" />',
+		'</div>',
+	].join(''),
+
+	initialize: function()
+	{
+		joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
+		this.$box.find('.add').on('click', _.bind(this.addPort, this));
+		this.$box.find('.remove').on('click', _.bind(this.removePort, this));
+	},
+
+	removePort: function()
+	{
+		if (this.model.get('outPorts').length > 1)
+		{
+			var outPorts = this.model.get('outPorts').slice(0);
+			outPorts.pop();
+			this.model.set('outPorts', outPorts);
+			var conditions = this.model.get('conditions').slice(0);
+			conditions.pop();
+			this.model.set('conditions', conditions);
+			var choices = this.model.get('choices').slice(0);
+			choices.pop();
+			this.model.set('choices', choices);
+			this.updateSize();
+		}
+	},
+
+	addPort: function()
+	{
+		var outPorts = this.model.get('outPorts').slice(0);
+		outPorts.push('output' + outPorts.length.toString());
+		this.model.set('outPorts', outPorts);
+		var conditions = this.model.get('conditions').slice(0);
+		conditions.push(null);
+		this.model.set('conditions', conditions);
+		var choices = this.model.get('choices').slice(0);
+		choices.push(null);
+		this.model.set('choices', choices);
+		this.updateSize();
+	},
+
+	updateBox: function()
+	{
+		joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
+		var conditions = this.model.get('conditions');
+		var choices = this.model.get('choices');
+		var valueFields = this.$box.find('input.value');
+
+		// Add value fields if necessary
+		for (var i = valueFields.length/2; i < conditions.length; i++)
+		{
+			// Prevent paper from handling pointerdown.
+			var field = $('<input type="text" class="value" />');
+			field.attr('placeholder', 'Condition ' + (i + 1).toString());
+			field.attr('index', i);
+			this.$box.append(field);
+			field.on('mousedown click', function(evt) { evt.stopPropagation(); });
+			
+			// This is an example of reacting on the input change and storing the input data in the cell model.
+			field.on('change', _.bind(function(evt)
+			{
+				var conditions = this.model.get('conditions').slice(0);
+				conditions[$(evt.target).attr('index')] = $(evt.target).val();
+				this.model.set('conditions', conditions);
+			}, this));
+			
+			
+			//Add field choice title
+			var field = $('<input type="text" class="value" />');
+			field.attr('placeholder', 'Choice text ' + (i + 1).toString());
+			field.attr('index', i);
+			this.$box.append(field);
+			field.on('mousedown click', function(evt) { evt.stopPropagation(); });
+
+			// This is an example of reacting on the input change and storing the input data in the cell model.
+			field.on('change', _.bind(function(evt)
+			{
+				var choices = this.model.get('choices').slice(0);
+				choices[$(evt.target).attr('index')] = $(evt.target).val();
+				this.model.set('choices', choices);
+			}, this));
+		}
+
+		// Remove value fields if necessary
+		for (var i = conditions.length; i < valueFields.length/2; i++)
+		{
+			$(valueFields[i*2]).remove();
+			$(valueFields[i*2+1]).remove();
+		}
+
+		// Update value fields
+		valueFields = this.$box.find('input.value');
+		for (var i = 0; i < conditions.length; i++)
+		{
+			var field = $(valueFields[i*2]);
+			if (!field.is(':focus'))
+			field.val(conditions[i]);
+		
+		    var field = $(valueFields[i*2+1]);
+			if (!field.is(':focus'))
+			field.val(choices[i]);
+		}
+	},
+
+	updateSize: function()
+	{
+		var textField = this.$box.find('input.name');
+		var height = textField.outerHeight(true);
+		this.model.set('size', { width: 200, height: 57 + Math.max(0, (this.model.get('outPorts').length - 1) * height * 2) });
+	},
+});
+
 
 joint.shapes.dialogue.Set = joint.shapes.devs.Model.extend(
 {
@@ -552,6 +699,19 @@ function gameData()
 					node.branches[branch] = null;
 				}
 			}
+			else if (node.type == 'GenChoice')
+			{
+				node.title = cell.name;
+				node.branches = {};
+				node.conditions = [];
+				for (var j = 0; j < cell.conditions.length; j++)
+				{
+					var branch = cell.choices[j];
+					var condition = cell.conditions[j];
+					node.branches[branch] = null;
+					node.conditions.push(condition);
+				}
+			}
 			else if (node.type == 'Set')
 			{
 				node.variable = cell.name;
@@ -564,7 +724,6 @@ function gameData()
 			    node.name = cell.name;
 			    node.title = cell.title;
 			    node.next = null;
-
 			}
 			else
 			{
@@ -596,6 +755,19 @@ function gameData()
 					{
 						var sourceCell = cellsByID[source.id];
 						value = sourceCell.values[portNumber - 1];
+					}
+					source.branches[value] = target ? target.id : null;
+				}
+				else if (source.type == 'GenChoice')
+				{
+					var portNumber = parseInt(cell.source.port.slice('output'.length));
+					var value;
+					if (portNumber == 0)
+						value = '_default';
+					else
+					{
+						var sourceCell = cellsByID[source.id];
+						value = sourceCell.choices[portNumber - 1];
 					}
 					source.branches[value] = target ? target.id : null;
 				}
@@ -947,8 +1119,9 @@ $('#paper').contextmenu(
 		{ text: 'Text', alias: '1-1', action: add(joint.shapes.dialogue.Text) },
 		{ text: 'Choice', alias: '1-2', action: add(joint.shapes.dialogue.Choice) },
 		{ text: 'Branch', alias: '1-3', action: add(joint.shapes.dialogue.Branch) },
-		{ text: 'Set', alias: '1-4', action: add(joint.shapes.dialogue.Set) },
-		{ text: 'Node', alias: '1-5', action: add(joint.shapes.dialogue.Node) },
+		{ text: 'GenChoice', alias: '1-4', action: add(joint.shapes.dialogue.GenChoice) },
+		{ text: 'Set', alias: '1-5', action: add(joint.shapes.dialogue.Set) },
+		{ text: 'Node', alias: '1-6', action: add(joint.shapes.dialogue.Node) },
 		{ type: 'splitLine' },
 		{ text: 'Save', alias: '2-1', action: save },
 		{ text: 'Load', alias: '2-2', action: load },
