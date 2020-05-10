@@ -1,5 +1,5 @@
 # Talkit
-Talkit is a web based, Non-linear, node based, game dialog editor. 
+Talkit is a web based, Non-linear, node based, game dialog editor.  
 [Русский readme](README.ru.md)
 #
 
@@ -29,10 +29,10 @@ Sets a variable to a value. Can link to one Text, Node, Set, or Branch.
 Takes one of several paths based on the value of a variable. Each port can link to one Text, Node, Set, or Branch.
 
 ### GenChoice
-Creates list with several responses that will appear only if the necessary conditions are met. First connection leads to path when no conditions are met and no choices appear. 
-Title: Selection screen title 
-Condition: Conditions necessary to make response appear 
-Choice text: Answer text
+Creates list with several responses that will appear only if the necessary conditions are met. First connection leads to path when no conditions are met and no choices appear.  
+Title: Selection screen title  
+Condition: Conditions necessary to make response appear  
+Choice text: Answer text  
 
 ### Node
 Does nothing. Can link to one Text, Node, Set, or Branch, or to one or more Choices.
