@@ -34,37 +34,50 @@ defaultLink.set('smooth', true);
 
 var allowableConnections =
 [
+	['dialogue.Start', 'dialogue.Text'],
+	['dialogue.Start', 'dialogue.Node'],
+	['dialogue.Start', 'dialogue.Choice'],
+	['dialogue.Start', 'dialogue.Set'],
+	['dialogue.Start', 'dialogue.Branch'],
+	['dialogue.Start', 'dialogue.GenChoice'],
+	
 	['dialogue.Text', 'dialogue.Text'],
 	['dialogue.Text', 'dialogue.Node'],
 	['dialogue.Text', 'dialogue.Choice'],
 	['dialogue.Text', 'dialogue.Set'],
 	['dialogue.Text', 'dialogue.Branch'],
 	['dialogue.Text', 'dialogue.GenChoice'],
+	
 	['dialogue.Node', 'dialogue.Text'],
 	['dialogue.Node', 'dialogue.Node'],
 	['dialogue.Node', 'dialogue.Choice'],
 	['dialogue.Node', 'dialogue.Set'],
 	['dialogue.Node', 'dialogue.Branch'],
 	['dialogue.Node', 'dialogue.GenChoice'],
+	
 	['dialogue.Choice', 'dialogue.Text'],
 	['dialogue.Choice', 'dialogue.Node'],
 	['dialogue.Choice', 'dialogue.Set'],
 	['dialogue.Choice', 'dialogue.Branch'],
 	['dialogue.Choice', 'dialogue.GenChoice'],
+	
 	['dialogue.Set', 'dialogue.Text'],
 	['dialogue.Set', 'dialogue.Node'],
 	['dialogue.Set', 'dialogue.Set'],
 	['dialogue.Set', 'dialogue.Branch'],
 	['dialogue.Set', 'dialogue.GenChoice'],
+	
 	['dialogue.Branch', 'dialogue.Text'],
 	['dialogue.Branch', 'dialogue.Node'],
 	['dialogue.Branch', 'dialogue.Set'],
 	['dialogue.Branch', 'dialogue.Branch'],
 	['dialogue.Branch', 'dialogue.GenChoice'],
+	
 	['dialogue.GenChoice', 'dialogue.Text'],
 	['dialogue.GenChoice', 'dialogue.Node'],
 	['dialogue.GenChoice', 'dialogue.Set'],
 	['dialogue.GenChoice', 'dialogue.Branch'],
+
 	['dialogue.GenChoice', 'dialogue.GenChoice'],
 ];
 
@@ -136,7 +149,7 @@ joint.shapes.dialogue.Base = joint.shapes.devs.Model.extend(
 	(
 		{
 			type: 'dialogue.Base',
-			size: { width: 250, height: 135 },
+			size: { width: 245, height: 135 },
 			name: '',
 			attrs:
 			{
@@ -157,7 +170,7 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 		'<span class="label"></span>',
 		'<button class="delete">x</button>',
         '<input type="actor" class="actor" placeholder="Actor" />',
-        '<p> <textarea type="text" class="name" rows="4" cols="27" placeholder="Speech"></textarea></p>',
+        '<p> <textarea type="text" class="name" rows="5" cols="30" placeholder="Speech"></textarea></p>',
         '</div>',
 	].join(''),
 
@@ -252,7 +265,7 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 		'<span class="label"> </span>',
 		'<button class="delete">x</button>',
         '<input type="choice" class="title" placeholder="Title" />',
-        '<p> <textarea type="text" class="name" rows="4" cols="27" placeholder="Speech"></textarea></p>',
+        '<p> <textarea type="text" class="name" rows="5" cols="30" placeholder="Speech"></textarea></p>',
 		'</div>',
         		
 	].join(''),
@@ -323,6 +336,34 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
     },
 });
 
+joint.shapes.dialogue.Start = joint.shapes.devs.Model.extend(
+{
+	defaults: joint.util.deepSupplement
+	(
+		{
+			type: 'dialogue.Start',
+			size: { width: 100, height: 57, },
+			inPorts: [],
+			outPorts: ['output'],
+			attrs:
+			{
+			  
+				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'], }
+			},
+		},
+		joint.shapes.dialogue.Base.prototype.defaults
+	),
+});
+joint.shapes.dialogue.StartView = joint.shapes.dialogue.BaseView.extend(
+{
+	template:
+	[
+		'<div class="node">',
+		'<span class="label"></span>',
+		'<button class="delete">x</button>',
+		'</div>'
+	].join('')
+});
 
 joint.shapes.dialogue.Node = joint.shapes.devs.Model.extend(
 {
@@ -369,7 +410,7 @@ joint.shapes.dialogue.Choice = joint.shapes.devs.Model.extend(
 	defaults: joint.util.deepSupplement
 	(
 		{
-		    size: { width: 250, height: 135 },
+		    size: { width: 245, height: 135 },
 			type: 'dialogue.Choice',
 			inPorts: ['input'],
 			outPorts: ['output'],
@@ -388,7 +429,7 @@ joint.shapes.dialogue.Branch = joint.shapes.devs.Model.extend(
 	(
 		{
 			type: 'dialogue.Branch',
-			size: { width: 200, height: 100, },
+			size: { width: 200, height: 82, },
 			inPorts: ['input'],
 			outPorts: ['output0'],
 			values: [],
@@ -485,7 +526,7 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 	{
 		var textField = this.$box.find('input.name');
 		var height = textField.outerHeight(true);
-		this.model.set('size', { width: 200, height: 100 + Math.max(0, (this.model.get('outPorts').length - 1) * height) });
+		this.model.set('size', { width: 200, height: 82 + Math.max(0, (this.model.get('outPorts').length - 1) * height) });
 	},
 });
 
@@ -725,6 +766,10 @@ function gameData()
 			    node.title = cell.title;
 			    node.next = null;
 			}
+			else if (node.type == 'Start')
+			{
+				node.next = null;
+			}
 			else
 			{
 			    node.actor = cell.actor;
@@ -771,7 +816,7 @@ function gameData()
 					}
 					source.branches[value] = target ? target.id : null;
 				}
-				else if ((source.type == 'Text' || source.type == 'Node') && target && target.type == 'Choice')
+				else if ((source.type == 'Text' || source.type == 'Node' || source.type == 'Start') && target && target.type == 'Choice')
 				{
 					if (!source.choices)
 					{
@@ -1122,6 +1167,7 @@ $('#paper').contextmenu(
 		{ text: 'GenChoice', alias: '1-4', action: add(joint.shapes.dialogue.GenChoice) },
 		{ text: 'Set', alias: '1-5', action: add(joint.shapes.dialogue.Set) },
 		{ text: 'Node', alias: '1-6', action: add(joint.shapes.dialogue.Node) },
+		{ text: 'Start', alias: '1-7', action: add(joint.shapes.dialogue.Start) },
 		{ type: 'splitLine' },
 		{ text: 'Save', alias: '2-1', action: save },
 		{ text: 'Load', alias: '2-2', action: load },
