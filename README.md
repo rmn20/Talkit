@@ -1,5 +1,6 @@
 # Talkit
 Talkit is a web based, Non-linear, node based, game dialog editor. 
+[Русский readme](README.ru.md)
 #
 
 Talkit is a fork of [et1337's](https://github.com/et1337) wonderful [The Poor Man's Dialogue Tree](http://et1337.com/2014/05/16/the-poor-mans-dialogue-tree/) which is currently part of [Lemma](https://github.com/et1337/Lemma) project.. 
@@ -29,6 +30,9 @@ Takes one of several paths based on the value of a variable. Each port can link 
 
 ### GenChoice
 Creates list with several responses that will appear only if the necessary conditions are met. First connection leads to path when no conditions are met and no choices appear.
+Title: Selection screen title
+Condition: Conditions necessary to make response appear
+Choice text: Answer text
 
 ### Node
 Does nothing. Can link to one Text, Node, Set, or Branch, or to one or more Choices.
