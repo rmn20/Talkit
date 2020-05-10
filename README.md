@@ -3,12 +3,15 @@ Web Based, Non-Linear Game Dialogue Editor.
 #
 
 Talkit is a fork of [et1337's](https://github.com/et1337) wonderful [The Poor Man's Dialogue Tree](http://et1337.com/2014/05/16/the-poor-mans-dialogue-tree/) which is currently part of [Lemma](https://github.com/et1337/Lemma) project.
-##Description.
+## Description:
 Talkit is a Non-linear, node based, game dialog editor. 
 It runs on [jointJS](http://www.jointjs.com/). It exports to JSON with game ready content.
 ![alt text](http://i.imgur.com/7lu8NIy.png?1)
 
 ## Nodes
+### Start
+Dialogue starting node
+
 ### Text
 Display a message from the specified actor.  
 Actor: Specify the actor who will say the speech.  
@@ -88,6 +91,5 @@ Example Output:
 
 ## Not Implemented Yet - TODO:.
 * Add ?import="file.json" to import a graph from disk.
-* Add the ability to make a node a starting node.
 * Display the Id of the node on each node.
 
