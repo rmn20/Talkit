@@ -3,7 +3,7 @@ Talkit это редактор нелинейных диалогов, работ
 [English readme](README.md)
 #
 
-Talkit это форк [The Poor Man's Dialogue Tree](http://et1337.com/2014/05/16/the-poor-mans-dialogue-tree/), написанного [et1337](https://github.com/et1337), и являющегося частью проекта [Lemma](https://github.com/et1337/Lemma).. 
+Talkit это форк [The Poor Man's Dialogue Tree](http://etodd.io/2014/05/16/the-poor-mans-dialogue-tree/), написанного [et1337](https://github.com/et1337), и являющегося частью проекта [Lemma](https://github.com/et1337/Lemma)..  
 Работает через [jointJS](http://www.jointjs.com/) и экспортирует в готовый для игры JSON файл.
 ![alt text](http://i.imgur.com/7lu8NIy.png?1)
 
@@ -12,9 +12,9 @@ Talkit это форк [The Poor Man's Dialogue Tree](http://et1337.com/2014/05/
 Узел, обозначающий начало диалога
 
 ### Text
-Отображает текст от определённого персонажа
-Actor: Имя персонажа
-Speech: Речь персонажа
+Отображает текст от определённого персонажа  
+Actor: Имя персонажа  
+Speech: Речь персонажа  
 
 ### Choice
 Предназначен для создания диалогов с возможностью выбора ответа  
@@ -38,7 +38,7 @@ Choice text: Текст ответа
 Ничего не делает. Может вести к одному Text, Node, Set, Branch, или к некоторому количеству узлов Choice.
 
 ## Использование
-Запускайте HTML файл, делайте свой диалог и экспортируйте его. 
+Запускайте HTML файл, делайте свой диалог и экспортируйте его.  
 Вы можете добавить ?load="file.json" к URL для загрузки диалога сохранённого в кеше.  
 Пример диалога после экспорта:
 ```javascript
