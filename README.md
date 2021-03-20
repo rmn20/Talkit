@@ -3,7 +3,7 @@ Talkit is a web based, Non-linear, node based, game dialog editor.
 [Русский readme](README.ru.md)
 #
 
-Talkit is a fork of [etodd's](https://github.com/etodd) wonderful [The Poor Man's Dialogue Tree](http://etodd.io/2014/05/16/the-poor-mans-dialogue-tree/) which is currently part of [Lemma](https://github.com/et1337/Lemma) project..  
+Talkit is a fork of [etodd's](https://github.com/etodd) wonderful [The Poor Man's Dialogue Tree](http://etodd.io/2014/05/16/the-poor-mans-dialogue-tree/) which is currently part of [Lemma](https://github.com/etood/Lemma) project..  
 It runs on [jointJS](http://www.jointjs.com/) and exports to JSON with game ready content.
 ![alt text](http://i.imgur.com/7lu8NIy.png?1)
 
